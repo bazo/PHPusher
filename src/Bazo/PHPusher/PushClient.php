@@ -15,6 +15,9 @@ class PushClient
 	/** @var ElephantIOClient */
 	private $client;
 
+	/** @var bool */
+	private $connected = false;
+
 	/**
 	 *
 	 * @param string $socketIOUrl
@@ -37,6 +40,10 @@ class PushClient
 	 */
 	public function push($room, $event, array $data)
 	{
+		if (!$this->connected) {
+			throw new NotConnectedException('You need to connect to server before pushing events.');
+		}
+
 		$this->client->emit('push', json_encode([
 			'room' => $room,
 			'event' => $event,
@@ -44,6 +51,16 @@ class PushClient
 		]), null);
 
 		return $this;
+	}
+
+	public function open($keepAlive = false)
+	{
+		$this->client->init($keepalive);
+	}
+
+	public function close()
+	{
+		$this->client->close();
 	}
 
 }
