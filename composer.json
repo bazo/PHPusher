@@ -1,0 +1,17 @@
+{
+    "name": "bazo/phpusher",
+    "description": "PHP push client forn nodepush",
+    "require": {
+        "wisembly/elephant.io": "@dev"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Martin Bazik",
+            "email": "martin@bazo.sk"
+        }
+    ],
+	"autoload": {
+		"psr-0": {"Bazo": "src/"}
+	}
+}
