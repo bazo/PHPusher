@@ -40,7 +40,7 @@ class PushClient
 	 */
 	public function push($room, $event, array $data)
 	{
-		if (!$this->connected) {
+		if ($this->connected === false) {
 			throw new NotConnectedException('You need to connect to server before pushing events.');
 		}
 
@@ -55,12 +55,16 @@ class PushClient
 
 	public function open($keepAlive = false)
 	{
-		$this->client->init($keepalive);
+		 if ($this->connected === false) {
+			$this->client->init($keepAlive);
+			$this->connected = true;
+		}
 	}
 
 	public function close()
 	{
 		$this->client->close();
+		$this->connected = false;
 	}
 
 }
