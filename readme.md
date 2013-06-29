@@ -1,10 +1,11 @@
 PHPusher
 ========
 
-NodePush PHP client
+NodePush PHP client. Push client for NodePush https://github.com/bazo/NodePush
 
-Usage:
+## Usage:
 
+```php
 $pushClient = new Bazo\PHPusher\PushClient('http://localhost:8080');
 $data = [
 	'id' => 1,
@@ -15,3 +16,5 @@ $data = [
 $pushClient->open();
 $pushClient->push($room, $event, $data);
 $pushClient->close();
+
+```
