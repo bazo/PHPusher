@@ -2,7 +2,7 @@
 
 namespace Bazo\PHPusher;
 
-use ElephantIO\Client as ElephantIOClient;
+use Tembo\SocketIOClient;
 
 /**
  * PushClient
@@ -12,23 +12,19 @@ use ElephantIO\Client as ElephantIOClient;
 class PushClient
 {
 
-	/** @var ElephantIOClient */
+	/** @var SocketIOClient */
 	private $client;
 
 	/** @var bool */
-	private $connected = false;
+	private $connected = FALSE;
 
 	/**
-	 *
 	 * @param string $socketIOUrl
 	 * @param string $socketIOPath
-	 * @param bool $read
-	 * @param bool $checkSslPeer
-	 * @param bool $debug
 	 */
-	public function __construct($socketIOUrl, $socketIOPath = 'socket.io', $read = true, $checkSslPeer = true, $debug = false)
+	public function __construct($socketIOUrl, $socketIOPath = 'socket.io')
 	{
-		$this->client = new ElephantIOClient($socketIOUrl, $socketIOPath, $protocol = 1, $read, $checkSslPeer, $debug);
+		$this->client = new SocketIOClient($socketIOUrl, $socketIOPath);
 	}
 
 	/**
@@ -48,23 +44,28 @@ class PushClient
 			'room' => $room,
 			'event' => $event,
 			'data' => $data
-		]), null);
+		]));
 
 		return $this;
 	}
 
-	public function open($keepAlive = false)
+	public function heartbeat()
 	{
-		 if ($this->connected === false) {
-			$this->client->init($keepAlive);
-			$this->connected = true;
+		$this->client->heartbeat();
+	}
+
+	public function connect($handshakeTimeout = NULL, $read = TRUE, $checkSslPeer = TRUE)
+	{
+		 if ($this->connected === FALSE) {
+			$this->client->connect($handshakeTimeout, $read, $checkSslPeer);
+			$this->connected = TRUE;
 		}
 	}
 
-	public function close()
+	public function disconnect($waitTime = 50)
 	{
-		$this->client->close();
-		$this->connected = false;
+		$this->client->disconnect($waitTime);
+		$this->connected = FALSE;
 	}
 
 }
