@@ -15,6 +15,9 @@ class PushClient
 	/** @var SocketIOClient */
 	private $client;
 
+	/** @var string */
+	private $key;
+	
 	/** @var bool */
 	private $connected = FALSE;
 
@@ -28,6 +31,19 @@ class PushClient
 	}
 
 	/**
+	 * Set the authentication key
+	 * @param string $key
+	 * @return PushClient
+	 */
+	public function setKey($key)
+	{
+		$this->key = $key;
+		return $this;
+	}
+
+
+	
+	/**
 	 * Emit an event
 	 * @param string $room
 	 * @param string $event
@@ -40,11 +56,19 @@ class PushClient
 			throw new NotConnectedException('You need to connect to server before pushing events.');
 		}
 
-		$this->client->emit('push', json_encode([
+		$payload = [
 			'room' => $room,
 			'event' => $event,
-			'data' => $data
-		]));
+			'data' => $data,
+			'timestamp' => time()
+		];
+		
+		if($this->key !== NULL) {
+			$signature = hash_hmac('md5', json_encode($payload), $this->key);
+			$payload['signature'] = $signature;
+		}
+		
+		$this->client->emit('push', $payload);
 
 		return $this;
 	}
